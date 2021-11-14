@@ -1,0 +1,108 @@
+/dts-v1/;
+
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "mt7620a_iptime.dtsi"
+
+/ {
+	compatible = "iptime,a1004v", "ralink,mt7620a-soc";
+	model = "ipTIME A1004v";
+
+	aliases {
+		led-boot = &led_cpu;
+		led-failsafe = &led_cpu;
+		led-running = &led_cpu;
+		led-upgrade = &led_cpu;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led_cpu: cpu {
+			label = "blue:cpu";
+			gpios = <&gpio0 11 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	keys {
+		compatible = "gpio-keys";
+
+		reset {
+			label = "reset";
+			gpios = <&gpio0 1 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_RESTART>;
+		};
+
+		wps {
+			label = "wps";
+			gpios = <&gpio0 2 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_WPS_BUTTON>;
+		};
+	};
+};
+
+&firmware {
+	reg = <0x30000 0x3D0000>;
+};
+
+&pinctrl {
+	state_default: pinctrl0 {
+		gpio {
+			ralink,group = "i2c", "uartf", "spi refclk";
+			ralink,function = "gpio";
+		};
+	};
+};
+
+&ehci {
+	status = "disabled";
+};
+
+&ohci {
+	status = "disabled";
+};
+
+&ethernet {
+	pinctrl-names = "default";
+	pinctrl-0 = <&rgmii1_pins &mdio_pins>;
+
+	port@5 {
+		status = "okay";
+		mediatek,fixed-link = <1000 1 1 1>;
+		phy-mode = "rgmii";
+	};
+
+	mdio-bus {
+		status = "okay";
+
+		ethernet-phy@0 {
+			reg = <0>;
+			phy-mode = "rgmii";
+		};
+
+		ethernet-phy@1 {
+			reg = <1>;
+			phy-mode = "rgmii";
+		};
+
+		ethernet-phy@2 {
+			reg = <2>;
+			phy-mode = "rgmii";
+		};
+
+		ethernet-phy@3 {
+			reg = <3>;
+			phy-mode = "rgmii";
+		};
+
+		ethernet-phy@4 {
+			reg = <4>;
+			phy-mode = "rgmii";
+		};
+
+		ethernet-phy@1f {
+			reg = <0x1f>;
+			phy-mode = "rgmii";
+		};
+	};
+};

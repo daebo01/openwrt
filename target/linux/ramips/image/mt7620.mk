@@ -398,6 +398,15 @@ define Device/iodata_wn-ac733gr3
 endef
 TARGET_DEVICES += iodata_wn-ac733gr3
 
+define Device/iptime_a1004v
+  DTS := mt7620a_iptime_a1004v
+  DEVICE_TITLE := IPTime A1004v
+  IMAGE_SIZE := 3904k
+  UIMAGE_NAME := a1004v
+  DEVICE_PACKAGES := kmod-mt76x0e 
+endef
+TARGET_DEVICES += iptime_a1004v
+
 define Device/kimax_u35wf
   DTS := U35WF
   IMAGE_SIZE := 16064k
@@ -486,6 +495,7 @@ TARGET_DEVICES += mlwg2
 define Device/mt7620a
   DTS := MT7620a
   DEVICE_TITLE := MediaTek MT7620a EVB
+  UIMAGE_NAME := a1004v
 endef
 TARGET_DEVICES += mt7620a
 
