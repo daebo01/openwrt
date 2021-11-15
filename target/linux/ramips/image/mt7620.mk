@@ -403,7 +403,7 @@ define Device/iptime_a1004v
   DEVICE_TITLE := IPTime A1004v
   IMAGE_SIZE := 3904k
   UIMAGE_NAME := a1004v
-  DEVICE_PACKAGES := kmod-mt76x0e 
+  DEVICE_PACKAGES := kmod-mt76x0e kmod-ipt-offload kmod-rt2800-soc
 endef
 TARGET_DEVICES += iptime_a1004v
 
