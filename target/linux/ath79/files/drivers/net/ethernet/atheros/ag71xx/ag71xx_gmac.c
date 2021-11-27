@@ -95,6 +95,16 @@ static void ag71xx_setup_gmac_956x(struct device_node *np, void __iomem *base)
 	__raw_writel(val, base + QCA956X_GMAC_REG_ETH_CFG);
 }
 
+static void ag71xx_setup_gmac_550x(struct device_node *np, void __iomem *base)
+{
+	u32 val = __raw_readl(base + QCN550X_GMAC_REG_ETH_CFG);
+
+	ag71xx_of_bit(np, "rgmii-enabled", &val, QCN550X_ETH_CFG_RGMII_EN);
+	ag71xx_of_bit(np, "ge0-sgmii", &val, QCN550X_ETH_CFG_GE0_SGMII);
+
+	__raw_writel(val, base + QCN550X_GMAC_REG_ETH_CFG);
+}
+
 int ag71xx_setup_gmac(struct device_node *np)
 {
 	struct device_node *np_dev;
@@ -124,6 +134,8 @@ int ag71xx_setup_gmac(struct device_node *np)
 		ag71xx_setup_gmac_955x(np, base);
 	else if (of_device_is_compatible(np_dev, "qca,qca9560-gmac"))
 		ag71xx_setup_gmac_956x(np, base);
+	else if (of_device_is_compatible(np_dev, "qca,qcn5500-gmac"))
+		ag71xx_setup_gmac_550x(np, base);
 
 	iounmap(base);
 

@@ -26,6 +26,7 @@ define Host/Compile
 	mkdir -p $(HOST_BUILD_DIR)/bin
 	$(call cc,add_header)
 	$(call cc,addpattern)
+	$(call cc,asus_qca_fix_checksum,-Wall -lz)
 	$(call cc,asustrx)
 	$(call cc,bcm4908asus,-Wall)
 	$(call cc,bcm4908kernel,-Wall)
