@@ -39,6 +39,14 @@ define Build/append-md5sum-bin
 		xargs echo -ne >> $@
 endef
 
+define Build/asus_fix_checksum
+  $(eval fw_version=$(word 1,$(1)))
+
+	$(STAGING_DIR_HOST)/bin/asus_qca_fix_checksum -i $@ -o $@.new \
+		-v $(fw_version)
+  mv $@.new $@
+endef
+
 define Build/cybertan-trx
 	@echo -n '' > $@-empty.bin
 	-$(STAGING_DIR_HOST)/bin/trx -o $@.new \
@@ -329,6 +337,19 @@ define Device/aruba_ap-105
   DEVICE_PACKAGES := kmod-i2c-gpio kmod-tpm-i2c-atmel
 endef
 TARGET_DEVICES += aruba_ap-105
+
+define Device/asus_rt-ac59u-v1
+  SOC := qcn5502
+  DEVICE_VENDOR := ASUS
+  DEVICE_MODEL := RT-AC59U
+  DEVICE_VARIANT := v1
+  IMAGE_SIZE := 15488k
+	UIMAGE_NAME := RT-AC59U
+  KERNEL_INITRAMFS := $$(KERNEL) | asus_fix_checksum "3.0.0.4.382.52482"
+  DEVICE_PACKAGES :=  kmod-ath10k-ct ath10k-firmware-qca9888-ct kmod-usb2 \
+	kmod-usb-ledtrig-usbport
+endef
+TARGET_DEVICES += asus_rt-ac59u-v1
 
 define Device/atheros_db120
   $(Device/loader-okli-uimage)

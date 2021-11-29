@@ -1,0 +1,167 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+
+#include "qcn550x.dtsi"
+
+#include <dt-bindings/gpio/gpio.h>
+#include <dt-bindings/input/input.h>
+
+/ {
+	compatible = "asus,rt-ac59u-v1", "qca,qcn5500";
+	model = "ASUS RT-AC59U V1";
+
+	leds {
+		compatible = "gpio-leds";
+
+		usb {
+			label = "blue:usb";
+			gpios = <&gpio 4 GPIO_ACTIVE_LOW>;
+			trigger-sources = <&hub_port>;
+			linux,default-trigger = "usbport";
+		};
+
+		wlan5g {
+			label = "blue:wlan5g";
+			gpios = <&gpio 5 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy0tpt";
+		};
+
+		wlan2g {
+			label = "blue:wlan2g";
+			gpios = <&gpio 15 GPIO_ACTIVE_LOW>;
+			linux,default-trigger = "phy1tpt";
+		};
+	};
+
+	keys {
+		compatible = "gpio-keys";
+
+		wps {
+			label = "wps";
+			gpios = <&gpio 1 GPIO_ACTIVE_LOW>;
+			linux,code = <KEY_WPS_BUTTON>;
+			debounce-interval = <60>;
+		};
+
+		reset {
+			label = "Reset button";
+			linux,code = <KEY_RESTART>;
+			gpios = <&gpio 3 GPIO_ACTIVE_LOW>;
+			debounce-interval = <60>;
+		};
+	};
+};
+
+&pcie {
+	status = "okay";
+
+	wifi@0,0 {
+		compatible = "pci168c,0056";
+		reg = <0x0000 0 0 0 0>;
+	};
+};
+
+&spi {
+	status = "okay";
+
+	flash@0 {
+		compatible = "winbond,w25q128", "jedec,spi-nor";
+		reg = <0>;
+		spi-max-frequency = <25000000>;
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			partition@0 {
+				label = "factory-boot";
+				reg = <0x0 0x40000>;
+				read-only;
+			};
+
+			partition@40000 {
+				label = "nvram";
+				reg = <0x40000 0x10000>;
+				read-only;
+			};
+
+			factory: partition@50000 {
+				label = "factory";
+				reg = <0x50000 0x10000>;
+				read-only;
+			};
+
+			partition@60000 {
+				compatible = "denx,uimage";
+
+				label = "firmware";
+				reg = <0x60000 0xFA0000>;
+			};
+		};
+	};
+};
+
+&mdio0 {
+	status = "okay";
+
+	phy-mask = <0>;
+
+	phy0: ethernet-phy@0 {
+		reg = <0>;
+		phy-mode = "sgmii";
+		qca,ar8327-initvals = <
+		 	0x04 0x00080080 /* PAD0 */
+		 	0x7c 0x0000007e /* PORT0_STATUS */
+		>;
+	};
+
+	phy1: ethernet-phy@1 {
+		reg = <1>;
+	};
+
+	phy2: ethernet-phy@2 {
+		reg = <2>;
+	};
+
+	phy3: ethernet-phy@3 {
+		reg = <3>;
+	};
+
+	phy4: ethernet-phy@4 {
+		reg = <4>;
+	};
+};
+
+&eth0 {
+	status = "okay";
+
+	phy-handle = <&phy0>;
+	phy-mode = "sgmii";
+
+	mtd-mac-address = <&factory 0x1002>;
+
+	fixed-link {
+		speed = <1000>;
+		full-duplex;
+	};
+};
+
+&wmac {
+	// not working...
+	// status = "okay";
+
+	mtd-cal-data = <&factory 0x1000>;
+};
+
+&usb {
+	status = "okay";
+
+	hub_port: port@1 {
+		reg = <1>;
+		#trigger-source-cells = <0>;
+	};
+};
+
+&usb_phy {
+	status = "okay";
+};

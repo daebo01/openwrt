@@ -922,7 +922,8 @@ __ag71xx_link_adjust(struct ag71xx *ag, bool update)
 		} else if (of_device_is_compatible(np, "qca,ar7242-eth") ||
 			   of_device_is_compatible(np, "qca,ar9340-eth") ||
 			   of_device_is_compatible(np, "qca,qca9550-eth") ||
-			   of_device_is_compatible(np, "qca,qca9560-eth")) {
+			   of_device_is_compatible(np, "qca,qca9560-eth") ||
+			   of_device_is_compatible(np, "qca,qcn5500-eth")) {
 			ath79_set_pllval(ag);
 			if (of_property_read_bool(np, "qca955x-sgmii-fixup"))
 				ag71xx_sgmii_init_qca955x(np);
@@ -934,7 +935,8 @@ __ag71xx_link_adjust(struct ag71xx *ag, bool update)
 	ag71xx_wr(ag, AG71XX_REG_MAC_IFCTL, ifctl);
 
 	if (of_device_is_compatible(np, "qca,qca9530-eth") ||
-	    of_device_is_compatible(np, "qca,qca9560-eth")) {
+	    of_device_is_compatible(np, "qca,qca9560-eth") ||
+	    of_device_is_compatible(np, "qca,qcn5500-eth")) {
 		/*
 		 * The rx ring buffer can stall on small packets on QCA953x and
 		 * QCA956x. Disabling the inline checksum engine fixes the stall.
@@ -1627,14 +1629,16 @@ static int ag71xx_probe(struct platform_device *pdev)
 	if (of_device_is_compatible(np, "qca,ar9340-eth") ||
 	    of_device_is_compatible(np, "qca,qca9530-eth") ||
 	    of_device_is_compatible(np, "qca,qca9550-eth") ||
-	    of_device_is_compatible(np, "qca,qca9560-eth"))
+	    of_device_is_compatible(np, "qca,qca9560-eth") ||
+	    of_device_is_compatible(np, "qca,qcn5500-eth"))
 		ag->desc_pktlen_mask = SZ_16K - 1;
 	else
 		ag->desc_pktlen_mask = SZ_4K - 1;
 
 	if (ag->desc_pktlen_mask == SZ_16K - 1 &&
 	    !of_device_is_compatible(np, "qca,qca9550-eth") &&
-	    !of_device_is_compatible(np, "qca,qca9560-eth"))
+	    !of_device_is_compatible(np, "qca,qca9560-eth") &&
+	    !of_device_is_compatible(np, "qca,qcn5500-eth"))
 		max_frame_len = ag->desc_pktlen_mask;
 	else
 		max_frame_len = 1540;
@@ -1649,7 +1653,8 @@ static int ag71xx_probe(struct platform_device *pdev)
 	    of_device_is_compatible(np, "qca,ar9340-eth") ||
 	    of_device_is_compatible(np, "qca,qca9530-eth") ||
 	    of_device_is_compatible(np, "qca,qca9550-eth") ||
-	    of_device_is_compatible(np, "qca,qca9560-eth"))
+	    of_device_is_compatible(np, "qca,qca9560-eth") ||
+	    of_device_is_compatible(np, "qca,qcn5500-eth"))
 		ag->tx_hang_workaround = 1;
 
 	ag->rx_buf_offset = NET_SKB_PAD;
@@ -1788,6 +1793,7 @@ static const struct of_device_id ag71xx_match[] = {
 	{ .compatible = "qca,qca9530-eth" },
 	{ .compatible = "qca,qca9550-eth" },
 	{ .compatible = "qca,qca9560-eth" },
+	{ .compatible = "qca,qcn5500-eth" },
 	{}
 };
 
